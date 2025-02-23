@@ -12,7 +12,7 @@ class NewsController extends Controller
     public function index()
     {
 
-        $data=['name' => 'zockchin' , 'age' => 21];
+        $data=['name' => ['zockchin',1] , 'age' => 21];
         return view('welcome',$data);
     }
 

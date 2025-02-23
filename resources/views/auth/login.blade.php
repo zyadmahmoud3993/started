@@ -7,9 +7,9 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus  />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="identify" :value="__('Email Or Mobile')" />
+            <x-text-input id="identify" class="block mt-1 w-full" type="text" name="identify" :value="old('identify')" required autofocus  />
+            <x-input-error :messages="$errors->get('identify')" class="mt-2" />
         </div>
 
         <!-- Password -->

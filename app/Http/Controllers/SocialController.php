@@ -10,4 +10,7 @@ class SocialController extends Controller
     public function redirect($Service){
         return Socialite::driver($Service)->redirect();
     }
+    public function callback($Service){
+        return response()->json(Socialite::driver($Service)->user(),200);
+    }
 }

@@ -26,15 +26,18 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
+        $this->identify = filter_var(request()->input('identify') , FILTER_VALIDATE_EMAIL ) ? "email" : 'mobile';
+        $emailOrInteger = $this->identify == 'email' ? 'email' : 'integer';
         return [
-            'email' => ['required', 'email','exists:users,email'],
+            'identify' => ['required', "$emailOrInteger","exists:users,$this->identify"],
             'password' => ['required', 'string'],
         ];
     }
     public function messages(): array
     {
         return [
-            'email.exists' => 'غير موجود',
+            'identify.exists' => 'غير موجود',
+            'identify.integer'=> 'يجب ان يكون بريد اكتروني صحيح او عددًا صحيحًا'
         ];
     }
     /**
@@ -43,19 +46,27 @@ class LoginRequest extends FormRequest
      * @throws \Illuminate\Validation\ValidationException
      */
     public function authenticate(): void
-    {
-        $this->ensureIsNotRateLimited();
+{
+    $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+    // التحقق إذا كان الإدخال هو بريد إلكتروني أو رقم هاتف
+    // $identify = filter_var($this->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+    // $inputs = [
+    //     $identify => $this->input('identify'),
+    //     'password'=> $this->input('password')
+    // ];
+    
+    if (!Auth::attempt([$this->identify => request()->input('identify'), 'password' => request()->input('password')], $this->boolean('remember'))) {
+        RateLimiter::hit($this->throttleKey());
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
-        }
-
-        RateLimiter::clear($this->throttleKey());
+        throw ValidationException::withMessages([
+            'identify' => trans('auth.failed'), // رسالة الخطأ عند الفشل
+        ]);
     }
+
+    // مسح الـ RateLimiter عند النجاح
+    RateLimiter::clear($this->throttleKey());
+}
 
     /**
      * Ensure the login request is not rate limited.

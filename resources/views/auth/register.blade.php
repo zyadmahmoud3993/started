@@ -48,7 +48,7 @@
                 {{ __('Register') }}
             </x-primary-button>
             <x-primary-button class="ms-4">
-                <a href="{{ route('redir_FB') }}">{{ __('Register With FaceBooK') }}</a>
+                <a href="{{ route('redir_FB','facebook') }}">{{ __('Register With FaceBooK') }}</a>
             </x-primary-button>
         </div>
     </form>
